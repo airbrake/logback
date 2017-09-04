@@ -1,0 +1,73 @@
+plugins {
+    id 'com.jfrog.bintray' version '1.7.3'
+}
+
+apply plugin: 'maven'
+apply plugin: 'java-library'
+
+group = 'io.airbrake'
+version = '0.1.0'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'io.airbrake:javabrake:0.1.2'
+    compile 'ch.qos.logback:logback-classic:1.2.3'
+    compile 'org.slf4j:slf4j-api:1.7.25'
+
+    testImplementation 'junit:junit:4.12'
+}
+
+test {
+    testLogging {
+        showStandardStreams = true
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+        showCauses true
+        showExceptions true
+        showStackTraces true
+        exceptionFormat "full"
+    }
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    configurations = ['archives']
+    publish = true
+    override = true
+    pkg {
+        repo = 'maven'
+        name = project.name
+        userOrg = 'airbrake'
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/airbrake/logback.git'
+        version {
+            name = project.version
+            desc = 'logback integration for javabrake'
+            vcsTag = project.version
+        }
+    }
+}
+
+task createPom {
+    doLast {
+        pom {
+            project {
+                groupId project.group
+                artifactId project.name
+                version project.version
+
+                inceptionYear '2017'
+                licenses {
+                    license {
+                        name 'MIT License'
+                        url 'http://www.opensource.org/licenses/mit-license.php'
+                        distribution 'repo'
+                    }
+                }
+            }
+        }.writeTo("pom.xml")
+    }
+}
