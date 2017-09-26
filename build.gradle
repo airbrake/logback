@@ -1,9 +1,20 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.11.0"
+  }
+}
+
 plugins {
     id 'com.jfrog.bintray' version '1.7.3'
 }
 
 apply plugin: 'maven'
 apply plugin: 'java-library'
+apply plugin: 'signing'
+apply plugin: 'io.codearte.nexus-staging'
 
 group = 'io.airbrake'
 version = '0.1.0'
@@ -13,7 +24,7 @@ repositories {
 }
 
 dependencies {
-    compile 'io.airbrake:javabrake:0.1.2'
+    compile 'io.airbrake:javabrake:0.1.4'
     compile 'ch.qos.logback:logback-classic:1.2.3'
     compile 'org.slf4j:slf4j-api:1.7.25'
 
@@ -49,6 +60,54 @@ bintray {
             vcsTag = project.version
         }
     }
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      pom.project {
+        name project.name
+        packaging 'jar'
+        description 'Logback integration for javabrake'
+        url 'https://airbrake.io'
+
+        scm {
+          connection 'https://github.com/airbrake/logback.git'
+          developerConnection 'https://github.com/airbrake/logback.git'
+          url 'https://github.com/airbrake/logback'
+        }
+
+        licenses {
+          license {
+            name 'MIT License'
+            url 'https://opensource.org/licenses/MIT'
+          }
+        }
+
+        developers {
+          developer {
+            id 'vmihailenco'
+            name 'Vladimir Mihailenco'
+            email 'vladimir.webdev@gmail.com'
+          }
+        }
+      }
+    }
+  }
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
