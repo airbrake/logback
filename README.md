@@ -17,7 +17,6 @@ Maven:
   <groupId>io.airbrake</groupId>
   <artifactId>logback</artifactId>
   <version>0.1.0</version>
-  <type>pom</type>
 </dependency>
 ```
 
