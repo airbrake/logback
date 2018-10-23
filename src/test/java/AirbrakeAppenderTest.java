@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 
 import io.airbrake.javabrake.NoticeError;
 import io.airbrake.javabrake.Airbrake;
-import io.airbrake.javabrake.NoticeStackRecord;
+import io.airbrake.javabrake.NoticeStackFrame;
 import io.airbrake.javabrake.Notifier;
 
 public class AirbrakeAppenderTest {
@@ -57,9 +57,9 @@ public class AirbrakeAppenderTest {
     assertEquals("io.airbrake.logback", err.type);
     assertEquals("hello from Java", err.message);
 
-    NoticeStackRecord record = err.backtrace[0];
-    assertEquals("testLogMessage", record.function);
-    assertEquals("test/io/airbrake/logback/AirbrakeAppenderTest.class", record.file);
-    assertEquals(54, record.line);
+    NoticeStackFrame frame = err.backtrace[0];
+    assertEquals("testLogMessage", frame.function);
+    assertEquals("test/io/airbrake/logback/AirbrakeAppenderTest.class", frame.file);
+    assertEquals(54, frame.line);
   }
 }
