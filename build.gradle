@@ -30,11 +30,11 @@ repositories {
 }
 
 dependencies {
-    compile 'io.airbrake:javabrake:0.1.4'
-    compile 'ch.qos.logback:logback-classic:1.2.3'
+    compile 'io.airbrake:javabrake:0.1.+'
+    compile 'ch.qos.logback:logback-classic:1.2.+'
     compile 'org.slf4j:slf4j-api:1.7.25'
 
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.+'
 }
 
 test {
@@ -149,3 +149,4 @@ task createPom {
         }.writeTo("pom.xml")
     }
 }
+build.dependsOn createPom

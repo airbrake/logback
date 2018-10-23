@@ -13,7 +13,6 @@ import ch.qos.logback.core.AppenderBase;
 import io.airbrake.javabrake.Airbrake;
 import io.airbrake.javabrake.Notice;
 import io.airbrake.javabrake.NoticeError;
-import io.airbrake.javabrake.NoticeStackRecord;
 
 public class AirbrakeAppender extends AppenderBase<ILoggingEvent> {
   @Override
