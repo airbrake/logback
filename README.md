@@ -7,7 +7,7 @@
 Gradle:
 
 ```gradle
-compile 'io.airbrake:logback:0.1.0'
+compile 'io.airbrake:logback:0.1.1'
 ```
 
 Maven:
@@ -16,14 +16,14 @@ Maven:
 <dependency>
   <groupId>io.airbrake</groupId>
   <artifactId>logback</artifactId>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
 </dependency>
 ```
 
 Ivy:
 
 ```xml
-<dependency org='io.airbrake' name='logback' rev='0.1.0'>
+<dependency org='io.airbrake' name='logback' rev='0.1.1'>
   <artifact name='logback' ext='pom'></artifact>
 </dependency>
 ```
@@ -39,6 +39,9 @@ Ivy:
   </appender>
 
   <appender name="Airbrake" class="io.airbrake.logback.AirbrakeAppender">
+    <projectId>12345</projectId>
+    <projectKey>FIXME</projectKey>
+    <env>production</env>
     <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
         <level>ERROR</level>
     </filter>

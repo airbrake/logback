@@ -16,7 +16,7 @@ apply plugin: 'java-library'
 apply plugin: 'io.codearte.nexus-staging'
 
 group = 'io.airbrake'
-version = '0.1.0'
+version = '0.1.1'
 
 if (project.hasProperty('signing.keyId')) {
   apply plugin: 'signing'
