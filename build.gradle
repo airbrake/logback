@@ -3,20 +3,24 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.11.0"
+    classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0"
   }
 }
 
-plugins {
-    id 'com.jfrog.bintray' version '1.7.3'
-}
+ plugins {
+     id 'java'
+     id 'java-library'
+     id 'maven-publish'  
+     id 'signing'
+ }
 
-apply plugin: 'maven'
-apply plugin: 'java-library'
-apply plugin: 'io.codearte.nexus-staging'
+ apply plugin: 'io.codearte.nexus-staging'
 
 group = 'io.airbrake'
-version = '0.1.1'
+version = '0.1.2'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 
 if (project.hasProperty('signing.keyId')) {
   apply plugin: 'signing'
@@ -26,15 +30,18 @@ if (project.hasProperty('signing.keyId')) {
 }
 
 repositories {
-  jcenter()
+    mavenCentral()
 }
 
 dependencies {
-    compile 'io.airbrake:javabrake:0.1.6'
-    compile 'ch.qos.logback:logback-classic:1.2.3'
-    compile 'org.slf4j:slf4j-api:1.7.25'
+    implementation 'io.airbrake:javabrake:0.3.0'
+    implementation 'ch.qos.logback:logback-classic:1.3.5'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
 
-    testImplementation 'junit:junit:4.12'
+java{
+    withJavadocJar()
+    withSourcesJar()
 }
 
 test {
@@ -48,105 +55,64 @@ test {
     }
 }
 
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
-    configurations = ['archives']
-    publish = true
-    override = true
-    pkg {
-        repo = 'maven'
-        name = project.name
-        userOrg = 'airbrake'
-        licenses = ['MIT']
-        vcsUrl = 'https://github.com/airbrake/logback.git'
-        version {
-            name = project.version
-            desc = 'logback integration for javabrake'
-            vcsTag = project.version
-        }
-    }
-}
+publishing {
+    publications{
+       
+        mavenJava(MavenPublication){
 
-if (project.hasProperty('ossrhUsername')) {
-  uploadArchives {
-    repositories {
-      mavenDeployer {
-        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+            group = 'io.airbrake'
+            artifactId = 'logback'
+            version = '0.1.2'
+            description = 'logback integration for javabrake'
+            from(components.java) 
 
-        repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
-          authentication(userName: ossrhUsername, password: ossrhPassword)
-        }
 
-        snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") {
-          authentication(userName: ossrhUsername, password: ossrhPassword)
-        }
-
-        pom.project {
-          name project.name
-          packaging 'jar'
-          description 'Logback integration for javabrake'
-          url 'https://airbrake.io'
-
-          scm {
-            connection 'https://github.com/airbrake/logback.git'
-            developerConnection 'https://github.com/airbrake/logback.git'
-            url 'https://github.com/airbrake/logback'
-          }
-
-          licenses {
-            license {
-              name 'MIT License'
-              url 'https://opensource.org/licenses/MIT'
-            }
-          }
-
-          developers {
-            developer {
-              id 'vmihailenco'
-              name 'Vladimir Mihailenco'
-              email 'vladimir.webdev@gmail.com'
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
-
-task createPom {
-    doLast {
-        pom {
-            project {
-                groupId project.group
-                artifactId project.name
-                version project.version
-
-                inceptionYear '2017'
-                licenses {
-                    license {
-                        name 'MIT License'
-                        url 'http://www.opensource.org/licenses/mit-license.php'
-                        distribution 'repo'
+            pom{
+                name = 'logback'
+                url = 'https://airbrake.io'
+                description = 'Logback integration for javabrake'           
+            licenses {
+                license {
+                     name = 'MIT License'
+                     url = 'https://opensource.org/licenses/MIT'
                     }
                 }
+            developers {
+                developer {
+                    id = 'sumitjoshi1989'
+                    name = 'Sumit Joshi'
+                    email = 'joshisumitsunil@gmail.com'
+                    }
+                }
+            scm {
+                connection = 'scm:git:git:github.com/airbrake/logback.git'
+                developerConnection = 'scm:git:ssh://github.com/airbrake/logback.git'
+                url = 'https://github.com/airbrake/logback'
+             }
+
             }
-        }.writeTo("pom.xml")
+        }
     }
+    repositories{
+        maven{
+           
+                name = 'OSSRH'
+                 url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+             //    url = 'https://oss.sonatype.org/content/repositories/snapshots'
+                credentials {
+                    username = project.properties["ossrhUsername"]
+                    password = project.properties["ossrhPassword"]
+            }
+            
+        }        
+    }
+  
 }
-build.dependsOn createPom
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
+javadoc{
+    
+}

@@ -1,2 +1,11 @@
 .gradle
+.project
+.settings/*
 build
+.ackrc
+bin
+**target
+**.DS_Store
+**.vscode
+Main.java
+/src/main/resources
