@@ -33,7 +33,7 @@ Ivy:
 ```
 
 ## Configuration
-If you want to send the error logs to Airbrake, you need to have following lines in logback.xml. Add this file in resources folder. This file is main file for logback configuration. and contains information about log levels, log appenders.
+If you want to send the error logs to Airbrake, you need to have following lines in logback.xml. Add this file in the resources folder. This is the main file for logback configuration. and contains information about log levels, log appenders.
 
 ```xml
 <configuration>
@@ -64,7 +64,7 @@ If you want to send the error logs to Airbrake, you need to have following lines
 import org.slf4j.LoggerFactory;
 import ch.qos.logback.classic.Logger;
 
- Logger logger = ((ch.qos.logback.classic.Logger))LoggerFactory.getLogger("Name");
+Logger logger = ((ch.qos.logback.classic.Logger))LoggerFactory.getLogger("Name");
 
 try {
   do();

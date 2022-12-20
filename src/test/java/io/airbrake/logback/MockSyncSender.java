@@ -23,6 +23,4 @@ class MockSyncSender implements SyncSender {
     // TODO Auto-generated method stub
     
   }
-
-
 }
