@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="Airbrake" class="io.airbrake.logback.AirbrakeAppender">
+    <projectId>123456</projectId>
+    <projectKey>FIXME</projectKey>
+    <env>test</env>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+        <level>ERROR</level>
+    </filter>
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="Console" />
+    <appender-ref ref="Airbrake" />
+  </root>
+</configuration>

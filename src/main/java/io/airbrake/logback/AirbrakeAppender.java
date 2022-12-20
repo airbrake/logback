@@ -3,24 +3,22 @@ package io.airbrake.logback;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
-
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import ch.qos.logback.core.AppenderBase;
-
 import io.airbrake.javabrake.Notifier;
 import io.airbrake.javabrake.Airbrake;
+import io.airbrake.javabrake.Config;
 import io.airbrake.javabrake.Notice;
 import io.airbrake.javabrake.NoticeError;
 
 public class AirbrakeAppender extends AppenderBase<ILoggingEvent> {
-  int projectId;
-  String projectKey;
-  String env;
+
   Notifier notifier;
+  int projectId;
+  String projectKey;String env;
 
   public void setProjectId(int projectId) {
     this.projectId = projectId;
@@ -36,11 +34,14 @@ public class AirbrakeAppender extends AppenderBase<ILoggingEvent> {
     this.env = env;
   }
 
-  void initNotifier() {
-    if (this.projectId == 0 || this.projectKey == null) {
+  public void initNotifier() {
+    if (projectId == 0 || projectKey == null) {
       return;
     }
-    this.notifier = new Notifier(projectId, projectKey);
+    Config config = new Config();
+    config.projectId = projectId;
+    config.projectKey = projectKey;
+    this.notifier = new Notifier(config);
   }
 
   @Override
@@ -54,20 +55,20 @@ public class AirbrakeAppender extends AppenderBase<ILoggingEvent> {
     errors.add(err);
 
     Notice notice = new Notice(errors);
-    if (this.env != null) {
+    if (this.env  != null) {
       notice.setContext("environment", this.env);
     }
     notice.setContext("severity", formatLevel(event.getLevel()));
     notice.setParam("threadName", event.getThreadName());
     Map<String, String> mdc = event.getMDCPropertyMap();
-    if (mdc.size() > 0) {
+    if (mdc !=null && mdc.size() > 0) {
       notice.setParam("mdc", mdc);
     }
     Map<String, String> ctx = event.getLoggerContextVO().getPropertyMap();
-    if (ctx.size() > 0) {
+    if (ctx!= null && ctx.size() > 0) {
       notice.setParam("contextV0", ctx);
     }
-    if (event.getMarker() != null) {
+    if (event.getMarker() != null ) {
       notice.setParam("marker", event.getMarker().getName());
     }
     this.send(notice);
@@ -112,10 +113,10 @@ public class AirbrakeAppender extends AppenderBase<ILoggingEvent> {
     return "trace";
   }
 
-  Future<Notice> send(Notice notice) {
+  Notice send(Notice notice) {
     if (this.notifier != null) {
-      return this.notifier.send(notice);
+      return this.notifier.sendSync(notice);
     }
-    return Airbrake.send(notice);
+    return Airbrake.sendSync(notice);
   }
 }
